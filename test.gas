@@ -1,0 +1,7 @@
+imm 10, gp0       ;mov 10 to gp0
+imm 10, gp1       ;mov 10 to gp1
+add gp0, gp1, gp2 ;add gp0 to gp1 and save in gp2
+
+imm 0, mir        ;mov 0 to mir
+mov ar0, gp2      ;mov gp2 to ar0
+hrdcall           ;print on screen
