@@ -1,0 +1,53 @@
+-- instructions
+000000 - nop  ; no operation
+000001 - mov  ; moves first arg to second
+000010 - add  ; add arg1 and arg2 save in arg3
+000011 - sub  ; sub arg1 and arg2 save in arg3
+000100 - mul  ; mul arg1 and arg2 save in arg3
+000101 - div  ; div arg1 and arg2 save in arg3
+000110 - not  ; not arg1 and save in arg2
+000111 - and  ; and arg1 and arg2 save in arg3
+001000 - nand ; nand arg1 and arg2 save in arg3
+001001 - or   ; or arg1 and arg2 save in arg3
+001010 - nor  ; nor arg1 and arg2 save in arg3
+001011 - xor  ; xor arg1 and arg2 save in arg3
+001100 - nxor ; nxor arg1 and arg2 save in arg3
+001101 - shl  ; shift to left arg1 times arg2 saves in arg3 
+001110 - shr  ; shift to right arg1 times arg2 saves in arg3
+001111 - jmp  ; set instruction counter to arg1 (can use label)
+010000 - jz   ; jump if cpr(register) = 0   (can use label)
+010001 - jnz  ; jump if cpr(register) != 0  (can use label)
+010010 - equ  ; if arg1 = arg2 cpr = 1 else cpr = 0
+010011 - neq  ; if arg1 != arg2 cpr = 1 else cpr = 0
+010100 - grt  ; if arg1 > arg2 cpr = 1 else cpr = 0
+010101 - grq  ; if arg1 >= arg2 cpr = 1 else cpr = 0
+010110 - les  ; if arg1 < arg2 cpr = 1 else cpr = 0
+010111 - leq  ; if arg1 <= arg2 cpr = 1 else cpr = 0
+011000 - grts ; if arg1 > arg2 cpr = 1 else cpr = 0 (singed(negative numbers))
+011001 - grqs ; if arg1 >= arg2 cpr = 1 else cpr = 0 (singed(negative numbers))
+011010 - less ; if arg1 < arg2 cpr = 1 else cpr = 0 (singed(negative numbers))
+011011 - leqs ; if arg1 <= arg2 cpr = 1 else cpr = 0 (singed(negative numbers))
+011100 - call ; push function on stack (label or num (offset)) 
+011101 - ret  ; pop function form stack
+011111 - push ; push on stack arg1
+100000 - pop  ; pop value form stack save in arg1
+100001 - qin  ; put arg1 in queue
+100010 - qout ; take first form queue to arg1
+100011 - imm  ; value(arg1) move to arg2 (16bit values - 1bit (max != 65535; max = 32767))
+100100 - intcall ; calls interpreter to exicute a function
+
+--registers
+mir - main regiser (used as function choser in intcall) / general purpose
+ar0 - first arg   / general purpose
+ar1 - second arg  / general purpose
+ar2 - third arg   / general purpose
+ar3 - fourth arg  / general purpose
+ar4 - fifth arg   / general purpose
+ar5 - sixth arg   / general purpose
+ar6 - seventh arg / general purpose
+ar7 - eighth arg  / general purpose
+cpr - comparisons regiser stores resoults from instruction like equ,less,grt 
+rar - ram addres regiser points to 8bit ram value(move values in/out using ex mov ram, ar0) (set addres ex mov rar, ar0) (in ra8 add 1 but in ra16 add 2 in ra32 add by 4 etc)
+isc - instruction counter (change only if you jump)
+ra8 - access ram (its like 8bit regiser and you can change addres by rar)
+ra16 - access ram (its like 16bit regiser and you can change addres by rar) 
