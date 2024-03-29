@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define conv_bin 0 //binary
 #define conv_dec 1 //decimal
@@ -22,7 +23,7 @@ void RemoveChars(char *s, char c) {
     s[writer]=0;
 }
 
-void conv_asm(const char* File_name, uint8_t mode) {
+void conv_asm_to_hex(const char* File_name) {
     FILE *file;
     FILE *filew;
     char buff[buffsize];
@@ -76,24 +77,25 @@ void conv_asm(const char* File_name, uint8_t mode) {
                     else if(strcmp(token, "ra8")  == 0) fprintf(filew,"24");
                     else if(strcmp(token, "ra16") == 0) fprintf(filew,"25");
 
-                    else if(strcmp(token, "ar0")  == 0) fprintf(filew,"00");
-                    else if(strcmp(token, "ar1")  == 0) fprintf(filew,"01");
-                    else if(strcmp(token, "ar2")  == 0) fprintf(filew,"02");
-                    else if(strcmp(token, "ar3")  == 0) fprintf(filew,"03");
-                    else if(strcmp(token, "ar4")  == 0) fprintf(filew,"04");
-                    else if(strcmp(token, "ar5")  == 0) fprintf(filew,"05");
-                    else if(strcmp(token, "ar6")  == 0) fprintf(filew,"06");
-                    else if(strcmp(token, "ar7")  == 0) fprintf(filew,"07");
-                    else if(strcmp(token, "gp0")  == 0) fprintf(filew,"08");
-                    else if(strcmp(token, "gp1")  == 0) fprintf(filew,"09");
-                    else if(strcmp(token, "gp2")  == 0) fprintf(filew,"0A");
-                    else if(strcmp(token, "gp3")  == 0) fprintf(filew,"0B");
-                    else if(strcmp(token, "gp4")  == 0) fprintf(filew,"0C");
-                    else if(strcmp(token, "gp5")  == 0) fprintf(filew,"0D");
-                    else if(strcmp(token, "gp6")  == 0) fprintf(filew,"0E");
-                    else if(strcmp(token, "gp7")  == 0) fprintf(filew,"0F");
-                    else if(strcmp(token, "mir")  == 0) fprintf(filew,"10");
-                    else if(strcmp(token, "rar")  == 0) fprintf(filew,"11");
+                    else if(strcmp(token, "ar0")  == 0) fprintf(filew," 00");
+                    else if(strcmp(token, "ar1")  == 0) fprintf(filew," 01");
+                    else if(strcmp(token, "ar2")  == 0) fprintf(filew," 02");
+                    else if(strcmp(token, "ar3")  == 0) fprintf(filew," 03");
+                    else if(strcmp(token, "ar4")  == 0) fprintf(filew," 04");
+                    else if(strcmp(token, "ar5")  == 0) fprintf(filew," 05");
+                    else if(strcmp(token, "ar6")  == 0) fprintf(filew," 06");
+                    else if(strcmp(token, "ar7")  == 0) fprintf(filew," 07");
+                    else if(strcmp(token, "gp0")  == 0) fprintf(filew," 08");
+                    else if(strcmp(token, "gp1")  == 0) fprintf(filew," 09");
+                    else if(strcmp(token, "gp2")  == 0) fprintf(filew," 0A");
+                    else if(strcmp(token, "gp3")  == 0) fprintf(filew," 0B");
+                    else if(strcmp(token, "gp4")  == 0) fprintf(filew," 0C");
+                    else if(strcmp(token, "gp5")  == 0) fprintf(filew," 0D");
+                    else if(strcmp(token, "gp6")  == 0) fprintf(filew," 0E");
+                    else if(strcmp(token, "gp7")  == 0) fprintf(filew," 0F");
+                    else if(strcmp(token, "mir")  == 0) fprintf(filew," 10");
+                    else if(strcmp(token, "rar")  == 0) fprintf(filew," 11");
+                    else fprintf(filew," %hx",atoi(token));
                 }
                 token = strtok(NULL, " ");
             }
@@ -101,8 +103,5 @@ void conv_asm(const char* File_name, uint8_t mode) {
         }
     }
     fclose(file);
-}
-
-void conv_mode(const char* File_name, uint8_t mode_in, uint8_t mode_out) {
-    return;
+    fclose(filew);
 }

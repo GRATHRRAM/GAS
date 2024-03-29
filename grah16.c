@@ -1,6 +1,15 @@
 #define GRAH16_C
 
 #include <stdint.h>
+#include <stdio.h>
+
+#ifdef WIN32
+#include <windows.h>
+#define sleep Sleep(100)
+#else
+#include <unistd.h>
+#define sleep usleep(100 * 1000)
+#endif
 
 #define ar0 0 //first arg
 #define ar1 1 //second arg
@@ -26,6 +35,7 @@
 #define isc 19 // instruction counter (change only if you jump)
 
 typedef struct argptrs {
+    uint16_t *mainr;
     uint16_t *arg0;
     uint16_t *arg1;
     uint16_t *arg2;
@@ -36,41 +46,44 @@ typedef struct argptrs {
     uint16_t *arg7;
 } argptrs;
 
-void inst_nop();                                              //00 no operation                                                                000000
-void inst_mov(uint16_t *arg1, uint16_t *arg2);                //01 moves first arg to                                                          000001
-void inst_add(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //02 add arg1 and arg2 save in arg3                                              000010
-void inst_sub(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //03 sub arg1 and arg2 save in arg3                                              000011
-void inst_mul(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //04 mul arg1 and arg2 save in arg3                                              000100
-void inst_div(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //05 div arg1 and arg2 save in arg3                                              000101
-void inst_not(uint16_t arg1, uint16_t *arg2);                 //06 not arg1 and save in arg2                                                   000110
-void inst_and(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //07 and arg1 and arg2 save in arg3                                              000111
-void inst_nand(uint16_t arg1, uint16_t arg2, uint16_t *arg3); //08 nand arg1 and arg2 save in arg3                                             001000
-void inst_or(uint16_t arg1, uint16_t arg2, uint16_t *arg3);   //09 or arg1 and arg2 save in arg3                                               001001
-void inst_nor(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //0A nor arg1 and arg2 save in arg3                                              001010
-void inst_xor(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //0B xor arg1 and arg2 save in arg3                                              001011
-void inst_nxor(uint16_t arg1, uint16_t arg2, uint16_t *arg3); //0C nxor arg1 and arg2 save in arg3                                             001100
-void inst_shl(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //0D shift to left arg1 times arg2 saves in arg3                                 001101
-void inst_shr(uint16_t arg1, uint16_t arg2, uint16_t *arg3);  //0E shift to right arg1 times arg2 saves in arg3                                001110
-void inst_jmp(uint16_t arg1);                                 //0F set instruction counter to arg1 (can use label)                             001111
-void inst_jz(uint16_t arg1);                                  //10 jump if cpr(register) = 0   (can use label)                                 010000
-void inst_jnz(uint16_t arg1);                                 //11 jump if cpr(register) != 0  (can use label)                                 010001
-void inst_equ(uint16_t arg1, uint16_t arg2);                  //12 if arg1 = arg2 cpr = 1 else cpr = 0                                         010010
-void inst_neq(uint16_t arg1, uint16_t arg2);                  //13 if arg1 != arg2 cpr = 1 else cpr = 0                                        010011
-void inst_grt(uint16_t arg1, uint16_t arg2);                  //14 if arg1 > arg2 cpr = 1 else cpr = 0                                         010100
-void inst_grq(uint16_t arg1, uint16_t arg2);                  //15 if arg1 >= arg2 cpr = 1 else cpr = 0                                        010101
-void inst_les(uint16_t arg1, uint16_t arg2);                  //16 if arg1 < arg2 cpr = 1 else cpr = 0                                         010110
-void inst_leq(uint16_t arg1, uint16_t arg2);                  //17 if arg1 <= arg2 cpr = 1 else cpr = 0                                        010111
-void inst_grts(int16_t arg1, int16_t arg2);                   //18 if arg1 > arg2 cpr = 1 else cpr = 0 (singed(negative numbers))              011000
-void inst_grqs(int16_t arg1, int16_t arg2);                   //19 if arg1 >= arg2 cpr = 1 else cpr = 0 (singed(negative numbers))             011001
-void inst_less(int16_t arg1, int16_t arg2);                   //1A if arg1 < arg2 cpr = 1 else cpr = 0 (singed(negative numbers))              011010
-void inst_leqs(int16_t arg1, int16_t arg2);                   //1B if arg1 <= arg2 cpr = 1 else cpr = 0 (singed(negative numbers))             011011
-void inst_call(uint16_t arg1);                                //1C push function on stack (label or num (offset))                              011100
-void inst_ret();                                              //1D pop function form stack                                                     011101
-void inst_push(uint16_t arg1);                                //1E push on stack arg1                                                          011111
-void inst_pop(uint16_t *arg1);                                //1F pop value form stack save in arg1                                           100000
-void inst_qin(uint16_t arg1);                                 //20 put arg1 in queue                                                           100001
-void inst_qout(uint16_t *arg1);                               //21 take first form queue to arg1                                               100010
-void inst_imm(uint16_t arg1,uint16_t *arg2);                  //23 value(arg1) move to arg2 (16bit values - 1bit (max != 65535; max = 32767))  100011
-void inst_hrdcall(argptrs *args);                             //24 hardcall => hardwarecall works like syscall                                 100100
-void inst_ra8(uint16_t arg1, uint16_t *arg2);                 //25 gets 8bit value from ram(rar regiser its pointer)                           100101
-void inst_ra16(uint16_t *arg1);                               //26 gets 16bit value from ram(rar regiser its pointer)                          100110
+
+void inst_nop(){sleep;}                                                         
+void inst_mov(uint16_t *arg1, uint16_t *arg2)                   {*arg2 = *arg1;}
+void inst_add(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 + arg2;}
+void inst_sub(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 - arg2;}
+void inst_mul(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 * arg2;}                                          
+void inst_div(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 / arg2;}
+void inst_not(uint16_t arg1, uint16_t *arg2)                    {*arg2 = ~arg1;}
+void inst_and(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 & arg2;}
+void inst_nand(uint16_t arg1, uint16_t arg2, uint16_t *arg3)    {*arg3 = ~(arg1 & arg2);}
+void inst_or(uint16_t arg1, uint16_t arg2, uint16_t *arg3)      {*arg3 = arg1 | arg2;}   
+void inst_nor(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = ~(arg1 | arg2);} 
+void inst_xor(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 ^ arg2;}  
+void inst_nxor(uint16_t arg1, uint16_t arg2, uint16_t *arg3)    {*arg3 = ~(arg1 ^ arg2);}; 
+void inst_shl(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 << arg2;}  
+void inst_shr(uint16_t arg1, uint16_t arg2, uint16_t *arg3)     {*arg3 = arg1 >> arg2;}
+void inst_jmp(uint16_t arg1, uint16_t *isc_reg)                 {*isc_reg = arg1;}
+void inst_jz(uint16_t arg1, uint16_t *isc_reg, uint8_t cpr_reg) {if(cpr_reg == 0) *isc_reg = arg1;}                                  
+void inst_jnz(uint16_t arg1, uint16_t *isc_reg, uint8_t cpr_reg){if(cpr_reg != 0) *isc_reg = arg1;}
+void inst_equ(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 == arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_neq(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 != arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_grt(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 > arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_grq(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 >= arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_les(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 < arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_leq(uint16_t arg1, uint16_t arg2, uint8_t *cpr_reg)   {if(arg1 <= arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_grts(int16_t arg1, int16_t arg2, uint8_t *cpr_reg)    {if(arg1 > arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_grqs(int16_t arg1, int16_t arg2, uint8_t *cpr_reg)    {if(arg1 >= arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_less(int16_t arg1, int16_t arg2, uint8_t *cpr_reg)    {if(arg1 < arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_leqs(int16_t arg1, int16_t arg2, uint8_t *cpr_reg)    {if(arg1 <= arg2) *cpr_reg = 1;else *cpr_reg = 0;}
+void inst_call(uint16_t arg1, uint16_t *stack);
+void inst_ret();
+void inst_push(uint16_t arg1);
+void inst_pop(uint16_t *arg1);
+void inst_qin(uint16_t arg1);
+void inst_qout(uint16_t *arg1);
+void inst_imm(uint16_t arg1,uint16_t *arg2){*arg2 = arg1;}
+void inst_hrdcall(argptrs *args){
+    if(args->mainr == 0){ //putnum
+        putchar(*args->arg0 + 48);
+    }
+}

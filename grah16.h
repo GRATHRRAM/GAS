@@ -73,7 +73,5 @@ void inst_qin(uint16_t arg1);                                 //20 put arg1 in q
 void inst_qout(uint16_t *arg1);                               //21 take first form queue to arg1                                               100010
 void inst_imm(uint16_t arg1,uint16_t *arg2);                  //23 value(arg1) move to arg2 (16bit values - 1bit (max != 65535; max = 32767))  100011
 void inst_hrdcall(argptrs *args);                             //24 hardcall => hardwarecall works like syscall                                 100100
-void inst_ra8(uint16_t arg1, uint16_t *arg2);                 //25 gets 8bit value from ram(rar regiser its pointer)                           100101
-void inst_ra16(uint16_t *arg1);                               //26 gets 16bit value from ram(rar regiser its pointer)                          100110
 
 #endif //!GRAH16_H
