@@ -10,19 +10,24 @@ uint8_t checkend(char* string);
 int main(int argc, char **argv) {
     if(argc > 0) {
         uint8_t info = checkend(argv[1]);
-        if(info == 1) conv_asm(argv[1], conv_hxd);
+        if(info == 1) conv_asm_to_hex(argv[1]);
         else if(info == 2){
             FILE *file;
             char buff[255];
-            uint16_t inst,arg1,arg2,arg3;
-            file = fopen(argv[1], "r");
-                
+            uint16_t inst[4];
+            file = fopen(argv[1], "r");//segv ¯\_(ツ)_/¯
+    
             while(fgets(buff, 255, file)) {
                 char *token = strtok(buff, " ");
+                
+                for(uint8_t i = 0; token != NULL; ++i) {
+                    inst[i] = (uint16_t) strtol(strtok(NULL, " "), NULL, 16);
+                }                
 
-                printf("%d ");
-                token = strtok(NULL, " ");
+                printf("%hx %hx %hx %hx\n",inst[0],inst[1],inst[2],inst[3]);
             }
+
+            fclose(file);
         }
     }
     return 0;
@@ -30,9 +35,10 @@ int main(int argc, char **argv) {
 
 uint8_t checkend(char* string){
     uint8_t len = (uint8_t) strlen(string); 
-    if(len < 5) return 0;
-    if(string[len] == 's' && string[len-1] == 'a' && string[len-2] == 'g') return 1;
-    if(string[len] == 'h' && string[len-1] == 'x' && string[len-2] == 'd') return 2;
-    if(string[len] == 'h' && string[len-1] == 'x') return 2;
+    if(len < 4) return 0;
+    char *dot = strrchr(string, '.');
+    if(strcmp(".gas", dot) == 0) return 1;
+    if(strcmp(".hxd", dot) == 0) return 2;
+    if(strcmp(".hx", dot) == 0)  return 2;
     return 0;
 }

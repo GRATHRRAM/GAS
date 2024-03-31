@@ -86,6 +86,6 @@ void inst_hrdcall(argptrs *args);
 
 
 void inst_hrdcall(argptrs *args){
-    if(args->mainr == 0)putchar(*args->arg0 + 48); //putnum
-    if(args->mainr == 1)putchar(*args->arg0);      //char
+    if(*args->mainr == 0)putchar(*args->arg0 + 48); //putnum
+    if(*args->mainr == 1)putchar(*args->arg0);      //char
 }
