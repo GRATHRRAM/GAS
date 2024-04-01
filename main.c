@@ -8,6 +8,7 @@
 uint8_t checkend(char* string);
 
 int main(int argc, char **argv) {
+    printf("yo");
     if(argc > 0) {
         uint8_t info = checkend(argv[1]);
         if(info == 1) conv_asm_to_hex(argv[1]);
@@ -15,13 +16,16 @@ int main(int argc, char **argv) {
             FILE *file;
             char buff[255];
             uint16_t inst[4];
-            file = fopen(argv[1], "r");//segv ¯\_(ツ)_/¯
+            file = fopen(argv[1], "r");
     
+            printf("yo");
             while(fgets(buff, 255, file)) {
                 char *token = strtok(buff, " ");
                 
                 for(uint8_t i = 0; token != NULL; ++i) {
-                    inst[i] = (uint16_t) strtol(strtok(NULL, " "), NULL, 16);
+                    token = strtok(NULL, " ");
+                    inst[i] = (uint16_t) strtol(token, NULL, 16);
+                    printf("%u,",i);
                 }                
 
                 printf("%hx %hx %hx %hx\n",inst[0],inst[1],inst[2],inst[3]);

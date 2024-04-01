@@ -1,5 +1,5 @@
 COMPILER=cc
-FLAGS=-O3 -Wall -Wextra -g
+FLAGS= -Wall -Wextra -g
 
 grah16.out: libconv.a libgrah16.a
 	$(COMPILER) $(FLAGS) main.c  -L. -I. -lgrah16 -lconv -o grah16.out
