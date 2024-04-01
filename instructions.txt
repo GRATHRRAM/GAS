@@ -36,8 +36,6 @@ bin/hx
 100010/21 - qout ; take first form queue to arg1
 100011/22 - imm  ; value(arg1) move to arg2 (16bit values - 1bit (max != 65535; max = 32767))
 100100/23 - hrdcall ; hardcall => hardwarecall works like syscall
-100101/24 - ra8  ; gets 8bit value from ram(rar regiser its pointer) arg1 sector((Sector0 00000000)(0000000 Sector1) <= 16bits)
-100110/25 - ra16 ; gets 16bit value from ram(rar regiser its pointer)
 
 --registers
 bin/dec/hx
