@@ -27,6 +27,7 @@
 #define isc 19 // instruction counter (change only if you jump)
 
 typedef struct argptrs {
+    uint16_t *mainr;
     uint16_t *arg0;
     uint16_t *arg1;
     uint16_t *arg2;

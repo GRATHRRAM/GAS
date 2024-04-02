@@ -27,7 +27,17 @@ int main(int argc, char **argv) {//dont look at this mess
             char buff[255];
             uint16_t inst[4];
             uint16_t *arg1,*arg2,*arg3;
-            registers regs;
+            registers regs = {0};
+            argptrs argp = {0};
+            argp.mainr = &regs.reg_mir;
+            argp.arg0 = &regs.reg_ar0;
+            argp.arg1 = &regs.reg_ar1;
+            argp.arg2 = &regs.reg_ar2;
+            argp.arg3 = &regs.reg_ar3;
+            argp.arg4 = &regs.reg_ar4;
+            argp.arg5 = &regs.reg_ar5;
+            argp.arg6 = &regs.reg_ar6;
+            argp.arg7 = &regs.reg_ar7;
     
             while(fgets(buff, 255, file)) {
                 char *token = strtok(buff, " ");
@@ -61,7 +71,7 @@ int main(int argc, char **argv) {//dont look at this mess
                     if(inst[1] == 0x11) arg1 = &regs.reg_rar; 
                     if(inst[1] == 0x12) arg1 = &regs.reg_cpr; 
                     if(inst[1] == 0x13) arg1 = &regs.reg_isc;
-                } else arg1 = inst[1];
+                } else arg1 = &inst[1];
 
                 if(inst[2] == 0x0)  arg2 = &regs.reg_ar0; 
                 if(inst[2] == 0x1)  arg2 = &regs.reg_ar1; 
@@ -105,23 +115,21 @@ int main(int argc, char **argv) {//dont look at this mess
                 if(inst[3] == 0x13) arg3 = &regs.reg_isc;
                  
 
-
-
                 if(inst[0] == 0x0) inst_nop();
                 else if(inst[0] == 0x1)  inst_mov(arg1,arg2);
-                else if(inst[0] == 0x2)  inst_add(arg1,arg2,arg3);
-                else if(inst[0] == 0x3)  inst_sub(arg1,arg2,arg3);
-                else if(inst[0] == 0x4)  inst_mul(arg1,arg2,arg3);
-                else if(inst[0] == 0x5)  inst_div(arg1,arg2,arg3);
-                else if(inst[0] == 0x6)  inst_not(arg1,arg2);
-                else if(inst[0] == 0x7)  inst_and(arg1,arg2,arg3);
-                else if(inst[0] == 0x8)  inst_nand(arg1,arg2,arg3);
-                else if(inst[0] == 0x9)  inst_or(arg1,arg2,arg3);
-                else if(inst[0] == 0xA)  inst_nor(arg1,arg2,arg3);
-                else if(inst[0] == 0xB)  inst_xor(arg1,arg2,arg3);
-                else if(inst[0] == 0xC)  inst_nxor(arg1,arg2,arg3);
-                else if(inst[0] == 0xD)  inst_shl(arg1,arg2,arg3);
-                else if(inst[0] == 0xE)  inst_shr(arg1,arg2,arg3);
+                else if(inst[0] == 0x2)  inst_add(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x3)  inst_sub(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x4)  inst_mul(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x5)  inst_div(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x6)  inst_not(*arg1,arg2);
+                else if(inst[0] == 0x7)  inst_and(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x8)  inst_nand(*arg1,*arg2,arg3);
+                else if(inst[0] == 0x9)  inst_or(*arg1,*arg2,arg3);
+                else if(inst[0] == 0xA)  inst_nor(*arg1,*arg2,arg3);
+                else if(inst[0] == 0xB)  inst_xor(*arg1,*arg2,arg3);
+                else if(inst[0] == 0xC)  inst_nxor(*arg1,*arg2,arg3);
+                else if(inst[0] == 0xD)  inst_shl(*arg1,*arg2,arg3);
+                else if(inst[0] == 0xE)  inst_shr(*arg1,*arg2,arg3);
                 //else if(inst[0] == 0xF)  inst_mov(inst[1],inst[2]);
                 //else if(inst[0] == 0x10) inst_mov(inst[1],inst[2]);
                 //else if(inst[0] == 0x11) inst_mov(inst[1],inst[2]);
@@ -139,10 +147,8 @@ int main(int argc, char **argv) {//dont look at this mess
                 //else if(inst[0] == 0x1D) inst_mov(inst[1],inst[2]);
                 //else if(inst[0] == 0x1E) inst_mov(inst[1],inst[2]);
                 //else if(inst[0] == 0x1F) inst_mov(inst[1],inst[2]);
-                else if(inst[0] == 0x20) inst_imm(arg1,arg2);
-                else if(inst[0] == 0x21) inst_hrdcall(&(argptrs){
-                &regs.reg_ar0,&regs.reg_ar1,&regs.reg_ar2,&regs.reg_ar3,
-                &regs.reg_ar4,&regs.reg_ar5,&regs.reg_ar6,&regs.reg_ar7,});
+                else if(inst[0] == 0x20) inst_imm(*arg1,arg2);
+                else if(inst[0] == 0x21) inst_hrdcall(&argp);
             }
 
             fclose(file);
